@@ -58,14 +58,10 @@ def check_input_parameters(vm_name, vm_ip, vm_iso, vm_ks):
     print("Checking input parameters")
     
     # Check if vm_name is a valid name for VM and that there is no any other VM with the same name
-    # It's possible not to check it here since prlctl already has such checks and we can rely on it
-    # print("Check if the {} is a valid name".format(vm_name))
-    
+    print("Check if the {} is a valid name".format(vm_name))
     
     # Check if vm_ip has correct IP and it's not reachable
-    # Difficult to decide. You may want no to set ip. 
-    # Best choise - use the S.Zenkov /mnt/sin/addips and parse it somehow to set external address if needed
-    # print("Check if the {} is a correct IP".format(vm_ip))
+    print("Check if the {} is a correct IP".format(vm_ip))
 
     # Check if vm_iso exists
     print("Check if the {} exists".format(vm_iso))
@@ -73,7 +69,7 @@ def check_input_parameters(vm_name, vm_ip, vm_iso, vm_ks):
     if not os.path.isfile(vm_iso):
         sys.exit("ERROR. Please input correct path for iso, current: {}".format(vm_iso))
 
-    # Check vm_ks. I assume that all ks.cfg files are located in the "default" ks server. So we could just touch it from the node.
+    # Check vm_ks ?
     print("Kickstart file located here: {}".format(vm_ks))
 
 def mount_iso(vm_iso, mount_dir):
@@ -130,9 +126,6 @@ def create_vm(vm_name, vm_ip, vm_iso, vm_ks):
     ''' TODO:
     1) Need to actually write some sort of API calls and create a VM 
     '''
-
-    # Way #1 - Simple. Create VM by executing prlctl
-    # Way #2 - Difficult. Create VM by uisng SDK.
 
 def append_qemu_commandline(var1,var2,var3):
     """ Modifying domainxml and insert custom commandline options """
