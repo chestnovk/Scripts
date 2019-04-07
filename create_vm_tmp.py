@@ -1,20 +1,5 @@
 #!/usr/bin/python3
 
-# TODO
-# Description doesnt' work
-# Also 
-# >>> vm3 = c.VzVmConfig(base_config, iso, "kchestnov3", "192.168.200.10", True, True, "192.168.200.11", True, True, "192.168.200.12", "token"))
-#  File "<stdin>", line 1
-#    vm3 = c.VzVmConfig(base_config, iso, "kchestnov3", "192.168.200.10", True, True, "192.168.200.11", True, True, "192.168.200.12", "token"))
-#                                                                                                                                             ^
-#SyntaxError: invalid syntax
-#>>> vm3 = c.VzVmConfig(base_config, iso, "kchestnov3", "192.168.200.10", True, True, "192.168.200.11", True, True, "192.168.200.12", "token")
-#Traceback (most recent call last):
-#  File "<stdin>", line 1, in <module>
-#  File "/root/create_vm_tmp.py", line 93, in __init__
-#    self.ips = self.ips + " " + self.va_ip
-#TypeError: Can't convert 'bool' object to str implicitly
-
 import os
 import sys
 import subprocess
@@ -211,11 +196,26 @@ class VzVmConfig:
                         "--network", self.private_net
                         ], stdout=False)
 
-    def add_kernel_options(self):
-
+    def start_with_cmdline(self):
+        # Obtain params from domainxml
+        # Need to find a way to redirect the output
+        # to a variable/file so we can restore it 
+        # later
+        subprocess.call([
+                        "virsh","dumpxml",self.domainxml
+                        ], stdout=False)
         # TO DO:
+        # redirect output
         # Modify domainxml
+        # start VM with defined params wiht 
+        # virsh start self.name
         pass
+    
+    def start(self):
+        # Simple start by using prlctl
+        subprocess.call([
+                        "prlctl", "start", self.name
+                        ], stdout=False)
 
 
 class iso:
@@ -223,8 +223,8 @@ class iso:
     def __init__(self, iso_path, mount_dir):
 
         if not os.path.isfile(iso_path):
-            sys.exit("ERROR. Please input correct path for iso, \
-                    current: {}".format(iso_path))
+            sys.exit("ERROR. Please input correct path for iso "
+                    "current: {}".format(iso_path))
         if not os.path.isdir(mount_dir):
             os.mkdir(mount_dir)
 
