@@ -101,7 +101,8 @@ class VzVmConfig:
         self.description = "extip:[{}]".format(self.ips)
 
         # libvirt specific options
-        self.domainxml = self.name
+        self.domainxml = os.path.join(VzVmBaseConfig.vm_config_dir, self.name)
+        self.domainxml_temp = self.domainxml + "_temp"
 
         # Maybe this is not worth thing to do.
         # And I can avoid this check later
@@ -196,27 +197,28 @@ class VzVmConfig:
                         "--network", self.private_net
                         ], stdout=False)
 
-    def start_with_cmdline(self):
-        # Obtain params from domainxml
-        # Need to find a way to redirect the output
-        # to a variable/file so we can restore it 
-        # later
-        subprocess.call([
-                        "virsh","dumpxml",self.domainxml
-                        ], stdout=False)
-        # TO DO:
-        # redirect output
-        # Modify domainxml
-        # start VM with defined params wiht 
-        # virsh start self.name
-        pass
-    
-    def start(self):
-        # Simple start by using prlctl
-        subprocess.call([
-                        "prlctl", "start", self.name
-                        ], stdout=False)
+    def add_kernel_options(self):
 
+        
+        with open(self.domainxml, 'w') as file:
+            subprocess.call(["virsh", "dumpxml", "test"], stdout = file)
+
+        with open(self.domainxml) as file:
+            tmp = file.readlines()
+
+        for index, line in enumerate(tmp):
+            if "<qemu:commandline>" in line:
+                # Commandline arguments
+                tmp.insert(index + 1, "    " + self.commandline + "\n")
+                # kernel
+                tmp.insert(index + 1, "    " + self.vmlinuz + "\n")
+                # initrd
+                tmp.insert(index + 1, "    " + self.initrd + "\n")
+
+        with open(self.domainxml_temp, 'w') as file:
+            for line in tmp:
+                file.write(line)
+    
 
 class iso:
 
