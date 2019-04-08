@@ -206,19 +206,23 @@ class VzVmConfig:
         with open(self.domainxml) as file:
             tmp = file.readlines()
 
-        for index, line in enumerate(tmp):
-            if "<qemu:commandline>" in line:
-                # Commandline arguments
-                tmp.insert(index + 1, "    " + self.commandline + "\n")
-                # kernel
-                tmp.insert(index + 1, "    " + self.vmlinuz + "\n")
-                # initrd
-                tmp.insert(index + 1, "    " + self.initrd + "\n")
+            for index, line in enumerate(tmp):
+                if "<qemu:commandline>" in line:
+                    tmp.insert(index + 1,
+                            "    <qemu:arg value='-kernel {}"
+                            " -initrd {} "
+                            " -append {}'/>\n".format(
+                                self.vmlinuz, 
+                                self.initrd, 
+                                self.commandline
+                                )
+                            )
 
-        with open(self.domainxml_temp, 'w') as file:
-            for line in tmp:
-                file.write(line)
+            with open(self.domainxml_temp, 'w') as file:
+                for line in tmp:
+                    file.write(line)
     
+
 
 class iso:
 
