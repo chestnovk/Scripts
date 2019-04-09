@@ -1,0 +1,142 @@
+<domain type='kvm' xmlns:qemu='http://libvirt.org/schemas/domain/qemu/1.0'>
+  <name>anikolayev_storage_1</name>
+  <uuid>34a7a506-235b-47d5-b3ed-7f47de68bdf9</uuid>
+  <description>extip:[172.16.56.135]</description>
+  <memory unit='KiB'>2097152</memory>
+  <currentMemory unit='KiB'>2097152</currentMemory>
+  <blkiotune>
+    <weight>500</weight>
+  </blkiotune>
+  <vcpu placement='static'>2</vcpu>
+  <cputune>
+    <global_period>100000</global_period>
+    <global_quota>-1</global_quota>
+  </cputune>
+  <os>
+    <type arch='x86_64' machine='pc-i440fx-vz7.7.0'>hvm</type>
+  </os>
+  <features>
+    <acpi/>
+    <apic/>
+    <pae/>
+    <vmcoreinfo state='on'/>
+  </features>
+  <cpu mode='host-model' check='partial'>
+    <model fallback='allow'/>
+    <topology sockets='1' cores='2' threads='1'/>
+    <feature policy='require' name='ss'/>
+    <feature policy='require' name='vmx'/>
+    <feature policy='require' name='hypervisor'/>
+    <feature policy='require' name='tsc_adjust'/>
+    <feature policy='require' name='pdpe1gb'/>
+    <feature policy='disable' name='arat'/>
+    <feature policy='disable' name='xgetbv1'/>
+    <feature policy='disable' name='xsavec'/>
+    <feature policy='disable' name='mpx'/>
+  </cpu>
+  <clock offset='utc'>
+    <timer name='pit' tickpolicy='discard'/>
+    <timer name='kvmclock' present='yes'/>
+  </clock>
+  <on_poweroff>destroy</on_poweroff>
+  <on_reboot>restart</on_reboot>
+  <on_crash>preserve</on_crash>
+  <devices>
+    <emulator>/usr/libexec/qemu-kvm</emulator>
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='qcow2' cache='none' io='native' discard='unmap'/>
+      <source file='/vz/vmprivate/34a7a506-235b-47d5-b3ed-7f47de68bdf9/harddisk.hdd' startupPolicy='optional'/>
+      <target dev='sda' bus='scsi'/>
+      <serial>4cf2651d377a4f88ac98</serial>
+      <product>Vz HARDDISK0</product>
+      <boot order='1'/>
+      <address type='drive' controller='0' bus='0' target='0' unit='0'/>
+    </disk>
+    <disk type='file' device='cdrom'>
+      <driver name='qemu' type='raw' cache='none' io='native' discard='unmap'/>
+      <source file='/mnt/sin/iso/vz-iso-7.0.8-514.iso' startupPolicy='optional'/>
+      <target dev='sdb' bus='scsi'/>
+      <readonly/>
+      <product>Vz CD-ROM1</product>
+      <boot order='2'/>
+      <address type='drive' controller='0' bus='0' target='2' unit='0'/>
+    </disk>
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='qcow2' cache='none' io='native' discard='unmap'/>
+      <source file='/vz/vmprivate/34a7a506-235b-47d5-b3ed-7f47de68bdf9/harddisk1.hdd' startupPolicy='optional'/>
+      <target dev='sdc' bus='scsi'/>
+      <serial>4b29c457a97847939970</serial>
+      <product>Vz HARDDISK2</product>
+      <boot order='4'/>
+      <address type='drive' controller='0' bus='0' target='1' unit='0'/>
+    </disk>
+    <controller type='scsi' index='0' model='virtio-scsi'>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x05' function='0x0'/>
+    </controller>
+    <controller type='usb' index='0' model='nec-xhci'>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x06' function='0x0'/>
+    </controller>
+    <controller type='pci' index='0' model='pci-root'/>
+    <controller type='virtio-serial' index='0'>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x08' function='0x0'/>
+    </controller>
+    <interface type='network'>
+      <mac address='00:1c:42:eb:5a:f2'/>
+      <source network='Bridged'/>
+      <target dev='vme001c42eb5af2'/>
+      <model type='virtio'/>
+      <boot order='3'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x0'/>
+    </interface>
+    <interface type='network'>
+      <mac address='00:1c:42:3c:a0:1b'/>
+      <source network='strg-kchestnov'/>
+      <target dev='vme001c423ca01b'/>
+      <model type='virtio'/>
+      <filterref filter='no-mac-spoofing-no-promisc'>
+        <parameter name='MAC' value='00:1C:42:EB:5A:F2'/>
+        <parameter name='MAC' value='00:1C:42:3C:A0:1B'/>
+      </filterref>
+      <boot order='5'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x04' function='0x0'/>
+    </interface>
+    <channel type='unix'>
+      <target type='virtio' name='org.qemu.guest_agent.0'/>
+      <address type='virtio-serial' controller='0' bus='0' port='1'/>
+    </channel>
+    <channel type='unix'>
+      <target type='virtio' name='org.qemu.guest_agent.1'/>
+      <address type='virtio-serial' controller='0' bus='0' port='2'/>
+    </channel>
+    <input type='tablet' bus='usb'>
+      <address type='usb' bus='0' port='1'/>
+    </input>
+    <input type='mouse' bus='ps2'/>
+    <input type='keyboard' bus='ps2'/>
+    <graphics type='vnc' port='-1' autoport='yes' websocket='-1' listen='::1'>
+      <listen type='address' address='::1'/>
+    </graphics>
+    <video>
+      <model type='vga' vram='32768' heads='1' primary='yes'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x0'/>
+    </video>
+    <memballoon model='virtio' autodeflate='on'>
+      <stats period='5'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x07' function='0x0'/>
+    </memballoon>
+    <panic model='isa'>
+      <address type='isa' iobase='0x505'/>
+    </panic>
+  </devices>
+  <qemu:commandline>
+    <qemu:arg value='-initrd'/>
+    <qemu:arg value='/root/kchestnov/mounts/vz-iso-7.0.8-514/images/pxeboot/initrd.img'/>
+    <qemu:arg value='-append'/>
+    <qemu:arg value='inst.stage2=hd:LABEL=vz-iso-7.0.8-514 ui ksdevice=eth0 ip=172.16.56.135 netmask=255.255.254.0 ks=http://172.16.56.80/ks/compute_kickstart.cfg netmask=255.255.254.0 vamn= uiip= hostname=anikolayev_storage_1 va_register= ui_register= token='/>
+    <qemu:arg value='-kernel'/>
+    <qemu:arg value='/root/kchestnov/mounts/vz-iso-7.0.8-514/images/pxeboot/vmlinuz'/>
+    <qemu:arg value='-d'/>
+    <qemu:arg value='guest_errors,unimp'/>
+  </qemu:commandline>
+</domain>
+

@@ -201,7 +201,7 @@ class VzVmConfig:
 
         
         with open(self.domainxml, 'w') as file:
-            subprocess.call(["virsh", "dumpxml", "test"], stdout = file)
+            subprocess.call(["virsh", "dumpxml", self.name], stdout = file)
 
         with open(self.domainxml) as file:
             tmp = file.readlines()
