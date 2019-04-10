@@ -1,0 +1,45 @@
+{
+	"cluster": {
+			"Name": "test_cluster",
+			"ISO": "/mnt/sin/iso/vz-iso-7.0.9"
+	},
+	"VM": {
+		"test_vm_1": {
+			"Name": "test_vm_1",
+			"public_ip": "172.16.56.200",
+			"public_mask": "255.255.252.0",
+			"private_ip": "192.168.56.200",
+			"private_mask": "255.255.255.0",
+			"includes_va" : "True",
+			"includes_storage_ui" : "True"
+		},
+		"test_vm_2": {
+			"Name": "test_vm_2",
+			"public_ip": "172.16.56.201",
+			"public_mask": "255.255.252.0",
+			"private_ip": "192.168.56.201",
+			"private_mask": "255.255.255.0",
+			"includes_va" : "False",
+			"va_register" : "True",
+			"includes_storage_ui" : "False",
+			"storage_ui_register" : "True"
+		},
+		"test_vm_3": {
+			"Name": "test_vm_3",
+			"public_ip": "172.16.56.202",
+			"public_mask": "255.255.252.0",
+			"private_ip": "192.168.56.202",
+			"private_mask": "255.255.255.0",
+			"includes_va" : "False",
+			"va_register" : "True",
+			"includes_storage_ui" : "False",
+			"storage_ui_register" : "True"
+		}
+	},
+	"VA": {
+		"va_ip": "172.16.56.203"
+	},
+	"UI":{
+		"storage_ui_ip": "172.16.56.204"
+	}
+}
