@@ -98,9 +98,9 @@ class VzVmConfig:
                             # example.cfg will be able to run
 
         self.commandline = ("inst.stage2=hd:LABEL={} "
-                            "ksdevice={}"
-                            "ip={}"
-                            "netmask={}"
+                            "ksdevice={} "
+                            "ip={} "
+                            "netmask={} "
                             "hostname={} "
                             "ks_device={} "
                             "public_ip={} "
