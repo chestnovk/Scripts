@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 # Check git
+import json
 import os
 import sys
 import subprocess
@@ -349,6 +350,23 @@ class iso:
                 self.iso_path,
                 self.mount_dir
                 ))
+
+
+class user_input:
+
+    def __init__(self, config, VzVmBaseConfig):
+        
+        
+        with open(config) as f:
+            self.config = json.load(open(config))
+        
+        self.cluster = self.config.get('cluster')
+        self.vms = self.config.get('VM')
+        self.va = self.config.get('VA')
+        self.ui = self.config.get('UI')
+
+        return 
+
 # Some kind of "main" is required here. Will add later.
 #
 #
