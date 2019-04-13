@@ -4,9 +4,9 @@ import json
 
 with open("cluster_config.json") as f:
     config = json.load(f)
-    for key, value in enumerate(config):
-        if value == 'cluster':
-            print("create cluster: ",
-                    config('cluster')('Name'))
+    for item in config.items():
+        if item[0] == 'cluster':
+                name = item[1]['Name']
+                print(name)
 
 
