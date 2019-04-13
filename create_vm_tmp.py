@@ -5,6 +5,13 @@ import os
 import sys
 import subprocess
 
+# TODO: user input -> ./create_vm_tmp.py <config_file>
+# TODO: check names of VMs, not add if exist.
+# TODO: import config from json
+# TODO: rewrite VzVmBaseConfig to get dict on input *args or **kargs
+# TODO: check example.cfg. Password doesn't appies to VAMN
+# TODO: rewrite add_kernel_options to use Etree XML parser
+# TODO: some output of the script are expected. Need to use some log file
 
 class VzVmBaseConfig:
 
@@ -47,31 +54,14 @@ class VzVmConfig:
 
         # Define name
         self.name = VzVmBaseConfig.cluster_name + "_" + name
-        self.hostname = "do-you-really-need-a-hostname"
+        self.hostname = "test-hostname"
         self.ips = ""
 
         # Kickstart location
         self.ks_device = "eth0"
-        self.ks = VzVmBaseConfig.kickstart
-
-        # Management containers
-        # self.includes_va = includes_va
-        # self.va_ip = va_ip
-        # self.va_register = va_register
-        # self.includes_storage_ui = includes_storage_ui
-        # self.storage_ui_ip = storage_ui_ip
-        # self.storage_ui_register = storage_ui_register
-        # self.storage_ui_token = storage_ui_token
 
         # Public net
         self.public_ip = public_ip
-
-        # To make sure that all VM will get the same
-        # Network settings I obtain the parameters
-        # below from base config
-        self.public_mask = VzVmBaseConfig.public_mask
-        self.public_gw = VzVmBaseConfig.public_gw
-        self.public_dns = VzVmBaseConfig.public_dns
 
         # VNC settings
         self.vnc_mode = "auto"
@@ -113,76 +103,65 @@ class VzVmConfig:
                                     iso.name,
                                     self.ks_device,
                                     self.public_ip,
-                                    self.public_mask,
+                                    VzVmBaseConfig.public_mask,
                                     self.hostname,
                                     self.ks_device,
                                     self.public_ip,
-                                    self.public_mask,
-                                    self.public_gw,
-                                    self.public_dns,
-                                    self.ks,
+                                    VzVmBaseConfig.public_mask,
+                                    VzVmBaseConfig.public_gw,
+                                    VzVmBaseConfig.public_dns,
+                                    VzVmBaseConfig.kickstart
                                     )
 
         # Private net only when needed. Default False
         if private_ip:
-            self.private_ip = private_ip
-            self.private_mask = "255.255.255.0"
             self.private_net = "pn_for_" + VzVmBaseConfig.cluster_name
             self.commandline = self.commandline +   ("private_ip={} "
                                                     "private_mask={} "
                                                     "private_net "
                                                     ).format(
-                                                            self.private_ip,
-                                                            self.private_mask,
+                                                            private_ip,
+                                                            private_mask,
                                                             self.private_net
                                                             )
 
         # VA options if needed. Default False
         # Add related options to commandline
         if includes_va and va_ip:
-            self.includes_va = includes_va
-            self.va_ip = va_ip
-            self.va_register = True
             self.ips = self.ips + " " + self.va_ip
             self.commandline = self.commandline +   ("includes_va={} "
+                                                    "va_register={}"
                                                     "va_ip={} "
                                                     ).format(
-                                                            self.includes_va,
-                                                            self.va_ip
+                                                            includes_va,
+                                                            va_ip
                                                             )
         elif va_register and va_ip:
-            self.va_ip = va_ip
-            self.va_register = va_register
             self.commandline = self.commandline +   ("va_register={} "
                                                     "va_ip={} "
                                                     ).format(
-                                                            self.va_register,
-                                                            self.va_ip
+                                                            va_register,
+                                                            va_ip
                                                             )
         # Storage UI options if needed. Default False.
         # Add related options to commandline.
         if includes_storage_ui and storage_ui_ip:
-            self.includes_storage_ui = includes_storage_ui
-            self.storage_ui_ip = storage_ui_ip
             self.ips = self.ips + " " + self.storage_ui_ip
             self.commandline = self.commandline +   ("includes_storage_ui={} "
                                                     "storage_ui_ip={} "
                                                     ).format(
-                                                            self.includes_storage_ui,
-                                                            self.storage_ui_ip
+                                                            includes_storage_ui,
+                                                            storage_ui_ip
                                                             )
 
         elif storage_ui_register and storage_ui_ip and storage_ui_token:
-            self.storage_ui_register = storage_ui_register
-            self.storage_ui_ip = storage_ui_ip
-            self.storage_ui_token = storage_ui_token
             self.commandline = self.commandline +   ("storage_ui_register={} "
                                                     "storage_ui_ip={} "
                                                     "storage_ui_token={} "
                                                     ).format(
-                                                            self.includes_storage_ui,
-                                                            self.storage_ui_ip,
-                                                            self.storage_ui_token
+                                                            storage_ui_register,
+                                                            storage_ui_ip,
+                                                            storage_ui_token
                                                             )
 
         self.description = "extip:[{}]".format(self.ips)

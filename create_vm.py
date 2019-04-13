@@ -1,20 +1,18 @@
 #!/usr/bin/python3
 
-""" ./create_vm.py - The second version of a script for VM creation. 
+""" ./create_vm.py - The second version of a script for VM creation.
     I am not quite sure but it will be good enough if we could create a custom
     KS script which will allow us to create any sort of VM by parsing kernel
     args.
-    
-    The first of all - this is a script for learning Python3. Don't even try 
+    The first of all - this is a script for learning Python3. Don't even try
     to push me fix it.
 """
 
 import os
-import re
 import sys
 import subprocess
 
-# Defaults    
+# Defaults
 mask = "255.255.252.0"
 gw = "172.16.56.1"
 dns = "10.30.0.27"
@@ -23,6 +21,7 @@ vnc_passwd = "vnc_nopasswd"
 root_dir = "/home/kchestnov/create_vm"
 mount_dir = root_dir + "/mounts"
 vm_config_dir = root_dir + "/vms"
+
 
 # Help for future usage:
 def help():
@@ -33,7 +32,8 @@ def help():
     ./create_vm.py name ip iso ks
 
     Example:
-    ./create_vm.py kchestnov 172.16.56.200 /tmp/vz-7.0.9.iso http://172.16.56.80/ks/compute_ks.cfg
+    ./create_vm.py kchestnov 172.16.56.200 /tmp/vz-7.0.9.iso
+    http://172.16.56.80/ks/compute_ks.cfg
 
     2) Some default parameters are assumed:
 
@@ -56,7 +56,7 @@ def check_input_parameters(vm_name, vm_ip, vm_iso, vm_ks):
     """ Function to check user input """
 
     print("Checking input parameters")
-    
+
     # Check if vm_name is a valid name for VM and that there is no any other VM with the same name
     # It's possible not to check it here since prlctl already has such checks and we can rely on it
     # print("Check if the {} is a valid name".format(vm_name))
@@ -141,7 +141,7 @@ def append_qemu_commandline(var1,var2,var3):
             Custom options are:
             kernel: {}
             vzlinux: {}
-            ip: {}""".format(var1,var2,var3))
+            ip: {}""".format(var1, var2, var3))
 
     ''' TODO:
     1) Modify domainxml to use custom kernel parameters
@@ -158,6 +158,7 @@ def start_vm(vm_name):
     3) Stop VM and change domainxml back
     4) Start VM, check access, return success
     '''
+
 
 def cleanup(vm_iso, mount_dir):
     """ Cleanup after script """
