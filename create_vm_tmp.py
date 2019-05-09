@@ -36,21 +36,50 @@ class VzVmBaseConfig:
 
 class VzVmConfig:
 
+    # Some shit went here, if executed with json
+    # the __init_ is not able to find va_ip
+    # and futher checks failed
+    # How to set default if there is no 
+    # in JSON?
     def __init__(
             self,
             VzVmBaseConfig,
             iso,
             name,
             public_ip,
-            private_ip="",
-            includes_va=False,
-            va_register=False,
-            va_ip="",
-            includes_storage_ui=False,
-            storage_ui_register=False,
-            storage_ui_ip="",
-            storage_ui_token=""
+            extra={
+                'private_ip':'',
+                'private_mask':'255.255.255.0',
+                'includes_va':'False',
+                'va_register':'False',
+                'va_ip':'',
+                'includes_storage_ui':'False',
+                'storage_ui_register':'False',
+                'storage_ui_ip':'',
+                'strorage_ui_token':None
+                }
             ):
+
+#    def __init__(
+#            self,
+#            VzVmBaseConfig,
+#            iso,
+#            name,
+#            public_ip,
+#            private_ip="",
+#            includes_va=False,
+#            va_register=False,
+#            va_ip="",
+#            includes_storage_ui=False,
+#            storage_ui_register=False,
+#            storage_ui_ip="",
+#            storage_ui_token=""
+#            ):
+
+        # Assign additional params from extra
+        for k,v in extra.items():
+            print("k = {}, v = {}".format(k,v))
+            setattr(self, k, v)
 
         # Define name
         self.name = VzVmBaseConfig.cluster_name + "_" + name
@@ -114,54 +143,54 @@ class VzVmConfig:
                                     )
 
         # Private net only when needed. Default False
-        if private_ip:
+        if self.private_ip:
             self.private_net = "pn_for_" + VzVmBaseConfig.cluster_name
             self.commandline = self.commandline +   ("private_ip={} "
                                                     "private_mask={} "
                                                     "private_net "
                                                     ).format(
-                                                            private_ip,
-                                                            private_mask,
+                                                            self.private_ip,
+                                                            self.private_mask,
                                                             self.private_net
                                                             )
 
         # VA options if needed. Default False
         # Add related options to commandline
-        if includes_va and va_ip:
+        if self.includes_va and self.va_ip:
             self.ips = self.ips + " " + self.va_ip
             self.commandline = self.commandline +   ("includes_va={} "
                                                     "va_register={}"
                                                     "va_ip={} "
                                                     ).format(
-                                                            includes_va,
-                                                            va_ip
+                                                            self.includes_va,
+                                                            self.va_ip
                                                             )
-        elif va_register and va_ip:
+        elif self.va_register and self.va_ip:
             self.commandline = self.commandline +   ("va_register={} "
                                                     "va_ip={} "
                                                     ).format(
-                                                            va_register,
-                                                            va_ip
+                                                            self.va_register,
+                                                            self.va_ip
                                                             )
         # Storage UI options if needed. Default False.
         # Add related options to commandline.
-        if includes_storage_ui and storage_ui_ip:
+        if self.includes_storage_ui and self.storage_ui_ip:
             self.ips = self.ips + " " + self.storage_ui_ip
             self.commandline = self.commandline +   ("includes_storage_ui={} "
                                                     "storage_ui_ip={} "
                                                     ).format(
-                                                            includes_storage_ui,
-                                                            storage_ui_ip
+                                                            self.includes_storage_ui,
+                                                            self.storage_ui_ip
                                                             )
 
-        elif storage_ui_register and storage_ui_ip and storage_ui_token:
+        elif self.storage_ui_register and self.storage_ui_ip and self.storage_ui_token:
             self.commandline = self.commandline +   ("storage_ui_register={} "
                                                     "storage_ui_ip={} "
                                                     "storage_ui_token={} "
                                                     ).format(
-                                                            storage_ui_register,
-                                                            storage_ui_ip,
-                                                            storage_ui_token
+                                                            self.storage_ui_register,
+                                                            self.storage_ui_ip,
+                                                            self.storage_ui_token
                                                             )
 
         self.description = "extip:[{}]".format(self.ips)
@@ -331,26 +360,51 @@ class iso:
                 ))
 
 
-class user_input:
+#class user_input:
+#
+#    def __init__(self, config, VzVmBaseConfig):
+#        
+#        
+#        with open(config) as f:
+#            self.config = json.load(open(config))
+#        
+#        self.cluster = self.config.get('cluster')
+#        self.vms = self.config.get('VM')
+#        self.va = self.config.get('VA')
+#        self.ui = self.config.get('UI')
+#
+#        return 
 
-    def __init__(self, config, VzVmBaseConfig):
-        
-        
-        with open(config) as f:
-            self.config = json.load(open(config))
-        
-        self.cluster = self.config.get('cluster')
-        self.vms = self.config.get('VM')
-        self.va = self.config.get('VA')
-        self.ui = self.config.get('UI')
 
-        return 
+
+cluster_name = "test_cluster"
+iso_path = "/home/kchestnov/ISO/CentOS-7-x86_64-Minimal-1810.iso"
+base_config = VzVmBaseConfig(cluster_name,iso_path)
+
+vm_iso = iso(base_config.vm_iso_path, base_config.mount_dir)
+config_path = "/home/kchestnov/Python/Scripts/cluster_config.json"
+
+list_of_vm = []
+
+
+def test():
+
+    with open(config_path) as f:
+        config = json.load(f)
+
+        vms = config.get('vm')
+        for key,config in vms.items():
+
+            name = config.pop('name')
+            print(name)
+            public_ip = config.pop('public_ip')
+            print(public_ip)
+            print(config)
+            vm = VzVmConfig(base_config, vm_iso, name, public_ip, config)
+            list_of_vm.append(vm)
+
 
 # Some kind of "main" is required here. Will add later.
-#
-#
-#
-#
 # base = c.VzVmBaseConfig("test_cluster", "/mnt/sin/iso/vz-iso-7.0.9-534.iso")
 # iso = c.iso(base.vm_iso_path, base.mount_dir)
 # vm = c.VzVmConfig(base, iso, "kchestnov_script_test", "172.16.56.201", includes_va=True, va_ip="172.16.56.202", includes_storage_ui=True, storage_ui_ip="172.16.56.203")
