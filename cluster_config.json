@@ -1,7 +1,7 @@
 {
 	"cluster": {
 			"name": "test_cluster",
-			"iso": "/mnt/sin/iso/vz-iso-7.0.9"
+			"iso": "/home/kchestnov/ISO/CentOS-7-x86_64-Minimal-1810.iso"
 	},
 	"vm": {
 		"test_vm_1": {
