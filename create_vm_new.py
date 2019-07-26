@@ -177,15 +177,17 @@ class VzVmConfig:
                 self.storage_ui_ip
             )
 
-        elif storage_ui_register == "True" and storage_ui_ip:
+        elif storage_ui_register == "True" and storage_ui_ip and storage_ui_token:
             self.storage_ui_register = storage_ui_register
             self.storage_ui_ip = storage_ui_ip
             self.storage_ui_token = storage_ui_token
             self.commandline = self.commandline + ("storage_ui_register={} "
                                                    "storage_ui_ip={} "
+                                                   "storage_ui_token={} "
                                                    ).format(
                 self.storage_ui_register,
                 self.storage_ui_ip,
+                self.storage_ui_token
             )
 
         self.description = "extip:[{}]".format(self.ips)
@@ -340,7 +342,7 @@ class iso:
     def mount(self):
         try:
             subprocess.call([
-                "sudo", "mount", "-o", "ro",
+                "sudo", "mount", "-o", "loop",
                 self.iso_path, self.mount_dir
             ], stdout=False)
         except:
@@ -384,6 +386,7 @@ def obtain_token_from_user():
 def my_main():
     
     json_config = sys.argv[1]
+    print(json_config)
 
     with open(json_config) as f:
         o_vms = []
@@ -425,10 +428,10 @@ def my_main():
             if i == 1:
             # Create a management VM
                 create_vm(vm)
-                token = obtain_token_from_user()
+                #token = obtain_token_from_user()
             # Create others:
             else:
-                vm.commandline = vm.commandline + "token={} ".format(token)
+                #vm.commandline = vm.commandline + "token={} ".format(token)
                 create_vm(vm)
             i = i + 1
 
